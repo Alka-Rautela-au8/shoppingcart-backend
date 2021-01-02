@@ -1,6 +1,6 @@
 # Shopping cart api
 
-> Backend api for shopping cart api
+> Backend api for shopping cart
 
 > includes complete user authentication
 - register
@@ -12,9 +12,10 @@
 - update password
 - forgot password (sending password reset token using nodemailer and mailtrap.io)
 - reset password 
+- password will be encrypted (using bcryptjs)
 
 > includes crud api
-- only admin will be able to perform crud on protected routes 
+- admin will be able to add category, get all users, delete, update or create user
 - admin is hardcoded so no one else can login as admin
 
 > types of user (there are two types of user)
