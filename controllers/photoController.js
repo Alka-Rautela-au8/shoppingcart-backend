@@ -17,11 +17,17 @@ exports.photoUpload = async(req, res, next) => {
             return next(new ErrorResponse(`No product with id of ${req.params.id}`, 404))
         }
 
-        // make sure user is category owner
-        if(product.user.toString !== req.user.id && req.user.role !== 'admin'){
+        // make sure user is product owner
+        if(product.user.toString() !== req.user.id && req.user.role !== 'admin'){
             return next(
-                new ErrorResponse(`User ${req.params.id} is not authorized to update this product`, 401)
+                new ErrorResponse(`User ${req.user.id} is not authorized to update this product`, 401)
             )
+        }
+
+        let remainingImageCount = process.env.MAX_IMAGE_COUNT - product.image.length
+
+        if(remainingImageCount === 0){
+            return next(new ErrorResponse('Maximum image limit exceeded!', 400))
         }
 
         if(!req.files){
@@ -31,7 +37,7 @@ exports.photoUpload = async(req, res, next) => {
         // const images = req.files;
         console.log('req.files--->', req.files)
 
-        if(Object.keys(req.files).length > process.env.MAX_IMAGE_COUNT){
+        if(Object.keys(req.files).length > remainingImageCount){
             return next(
                 new ErrorResponse(`maximum ${process.env.MAX_IMAGE_COUNT} images can be uploaded`, 400)
             )
@@ -99,7 +105,9 @@ exports.photoUpload = async(req, res, next) => {
         makingAsync.then(() => {
             console.log("data", data)
 
-            Product.findByIdAndUpdate(product._id, {image: data}).then(response => {
+            let oldImage = product.image
+
+            Product.findByIdAndUpdate(product._id, {image: [...oldImage, ...data]}).then(response => {
                 res.status(200).json({
                     success: true,
                     data: data
@@ -112,7 +120,7 @@ exports.photoUpload = async(req, res, next) => {
 
                 // just to check files inside tmp folder
                 fs.readdir(dir, (err, files) => {
-                    if(err)throw err;
+                    if(err) next(err);
 
                     files.forEach(file => {
                         console.log(file)
@@ -121,7 +129,7 @@ exports.photoUpload = async(req, res, next) => {
 
                 // delete directory recursively
                 fs.rmdir(dir, {recursive: true}, (err)=> {
-                    if(err)throw err;
+                    if(err) next(err);
 
                     console.log(`${dir} is deleted!`)
                 })
@@ -132,6 +140,43 @@ exports.photoUpload = async(req, res, next) => {
         }).catch(err => console.log(err))
 
 
+    }catch(err){
+        next(err)
+    }
+}
+
+
+// @desc         remove and update an image of product
+// @route        PUT /api/v1/products/:id/photo/:imageId
+// @access       Private
+exports.removePhoto = async(req, res, next) => {
+    try{
+        const product = await Product.findById(req.params.id);
+
+        if(!product){
+            return next(new ErrorResponse(`No product with id of ${req.params.id}`, 404))
+        }
+
+        // make sure user is product owner
+        if(product.user.toString !== req.user.id && req.user.role !== 'admin'){
+            return next(
+                new ErrorResponse(`User ${req.params.id} is not authorized to update this product`, 401)
+            )
+        }
+
+        const imgArr = product.image
+
+        if(req.params.imageId){
+            const filteredArr = imgArr.filter(item => item.cloudinary_id !== req.params.imageId)
+            await cloudinary.uploader.destroy(req.params.imageId)
+
+            Product.findByIdAndUpdate(product._id, {image: filteredArr}).then(response => {
+                res.status(200).json({
+                    success: true,
+                    data: filteredArr
+                })
+            }).catch(err => next(err))
+        }
     }catch(err){
         next(err)
     }

@@ -8,7 +8,8 @@ import {
 } from '../controllers/product';
 
 import{
-    photoUpload
+    photoUpload,
+    removePhoto
 } from '../controllers/photoController';
 
 import Product from '../models/Product';
@@ -32,6 +33,9 @@ router.route('/:id')
 
 router.route('/:id/photo')
     .put(protect, authorize('seller', 'admin'), photoUpload)
+
+router.route('/:id/photo/:imageId')
+    .put(protect, authorize('seller', 'admin'), removePhoto)
 
 
 module.exports = router;

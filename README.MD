@@ -27,7 +27,7 @@
 
 ### includes crud api
 - admin will be able to add category, get all users, delete, update or create user
-- admin is hardcoded so no one else can login as admin
+- admin is hardcoded so no one else can register
 
 ### types of user (there are two types of user)
 - seller

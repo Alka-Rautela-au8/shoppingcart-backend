@@ -34,7 +34,7 @@ router.route('/:categoryId/products')
         path: 'category',
         select: 'name'
     }), getProducts)
-    .post(protect, authorize('seller', 'admin'), addProduct)
+    .post(protect, authorize('seller', 'admin'), addProduct)  // only seller and admin will be able to add products
 //-------------------------------------------------------------//
 
 router.use(protect) // all the routes below this will be protected

@@ -96,7 +96,7 @@ exports.updateProduct = async(req, res, next) => {
         // make sure user is product owner
         if(product.user.toString() !== req.user.id && req.user.role !== 'admin'){
             return next(
-                new ErrorResponse(`User ${req.user.id} is not authorized to update product ${course._id}`, 401)
+                new ErrorResponse(`User ${req.user.id} is not authorized to update product ${product._id}`, 401)
             )
         }
     
@@ -131,7 +131,16 @@ exports.deleteProduct = async(req, res, next) => {
                 new ErrorResponse(`User ${req.user.id} is not authorized to delete product ${product._id}`, 401)
             )
         }
-    
+
+        // deleting a product should also delete pictures from cloudinary
+        let imgArray = product.image
+        // console.log('product', product.image)
+        if(imgArray){
+            for(let img of imgArray){
+                cloudinary.uploader.destroy(img.cloudinary_id);
+            }
+        }
+
         await product.remove()
     
         res.status(200).json({
