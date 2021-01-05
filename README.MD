@@ -2,7 +2,7 @@
 
 > Backend api for shopping cart
 
-> includes complete user authentication
+### Includes complete user authentication
 - register
 - login
 - get jwt and send in cookie
@@ -12,13 +12,24 @@
 - update password
 - forgot password (sending password reset token using nodemailer and mailtrap.io)
 - reset password 
-- password will be encrypted (using bcryptjs)
+- password will be hashed (using bcryptjs)
 
-> includes crud api
+### Advance queries
+- select
+- sorting
+- pagination
+- limit
+- advance filtering
+
+### Error Handling
+- custom ErrorResponse class
+- mongoose error handling
+
+### includes crud api
 - admin will be able to add category, get all users, delete, update or create user
 - admin is hardcoded so no one else can login as admin
 
-> types of user (there are two types of user)
+### types of user (there are two types of user)
 - seller
 - user
 

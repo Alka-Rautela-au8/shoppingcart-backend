@@ -41,8 +41,7 @@ const ProductSchema = new mongoose.Schema({
         ]
     },
     address:{
-        type: String,
-        required: [true, 'Please add an address']
+        type: String
     },
     averageRating:{
         type: Number, 
@@ -52,8 +51,7 @@ const ProductSchema = new mongoose.Schema({
     averageCost: Number,
     image:{
         //Array of strings
-        type: [String],
-        enum: ['no-photo.jpg']
+        type: Array
     },
     createdAt:{
         type: Date,
@@ -63,6 +61,9 @@ const ProductSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,   //only user of this id can edit this product info
         ref: 'User',
         required: true
+    },
+    cloudinaryId : {
+        type: String
     }
 });
 
