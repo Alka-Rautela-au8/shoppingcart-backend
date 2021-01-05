@@ -16,15 +16,25 @@ exports.getProducts = async(req, res, next) => {
         if(req.params.categoryId){
             const products = await Product.find({category: req.params.categoryId});
 
+            // all the product of selected category
             if(!products){
                 return next(new ErrorResponse(`Category not found with id of ${req.params.categoryId}`, 404))
             }
+
+            console.log(res)
             
-            res.status(200).json({
-                success: true,
-                count: products.length,
-                data: products
-            });
+
+            Product.find({category: req.params.categoryId}).then(response => {
+                console.log(response)
+                res.status(200).json(response.advancedResults)
+            }).catch(err => next(err))
+
+            
+            // res.status(200).json({
+            //     success: true,
+            //     count: products.length,
+            //     data: products
+            // });
         }else{
             res.status(200).json(res.advancedResults)
         }

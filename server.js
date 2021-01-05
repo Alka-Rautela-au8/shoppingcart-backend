@@ -71,7 +71,7 @@ const server = app.listen(
 // global handler for unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
     console.log(`Error: ${err.message}`);
-
+    
     // Close server and exit process
     server.close(() => {
         process.exit(1)

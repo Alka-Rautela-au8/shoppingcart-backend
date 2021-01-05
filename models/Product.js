@@ -64,6 +64,10 @@ const ProductSchema = new mongoose.Schema({
     },
     cloudinaryId : {
         type: String
+    },
+    verified: {
+        type: Boolean,
+        default: false
     }
 });
 

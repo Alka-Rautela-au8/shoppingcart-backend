@@ -29,6 +29,10 @@
 - admin will be able to add category, get all users, delete, update or create user
 - admin is hardcoded so no one else can register
 
+#### multiple image upload to cloudinary using express-fileupload
+- seller and admin can upload multiple images (I have set it to max 5 images, you can change limit in config file) to cloudinary and image link will be saved in mongodb
+- they can also delete a particular image (this will delete image from cloudinary and will remove link from mongodb)
+
 ### types of user (there are two types of user)
 - seller
 - user
