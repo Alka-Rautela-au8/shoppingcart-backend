@@ -4,15 +4,9 @@ const errorHandler = (err, req, res, next) => {
     let error  = {...err}
 
     error.message = err.message;
-    console.log('from errorHandler ---> ', err.message);
+    error.name= err.name;
 
-    // // Mongoose Duplicate key
-    // if(err.code === 11000){
-    //     return res.status(400).json({
-    //         success: false,
-    //         message: `${Object.keys(err.keyValue)} is already in use`
-    //     })
-    // }
+    console.log('from errorHandler ---> ', err.name);
 
     if(error.name === 'CastError'){
         const message = 'Resource not found'

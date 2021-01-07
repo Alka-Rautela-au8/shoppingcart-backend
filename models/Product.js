@@ -65,9 +65,10 @@ const ProductSchema = new mongoose.Schema({
     cloudinaryId : {
         type: String
     },
-    verified: {
-        type: Boolean,
-        default: false
+    status: {
+        type: String,
+        enum: ['pending', 'published', 'cancelled'],
+        default: 'pending'
     }
 });
 

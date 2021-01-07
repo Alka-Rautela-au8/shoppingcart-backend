@@ -2,9 +2,6 @@ import ErrorResponse from '../utils/errorResponse';
 import Product from '../models/Product';
 import Category from '../models/Category';
 
-import path from 'path';
-import fs from 'fs';
-
 import cloudinary from '../utils/cloudinary';
 
 // @desc         Get all Products
@@ -16,25 +13,15 @@ exports.getProducts = async(req, res, next) => {
         if(req.params.categoryId){
             const products = await Product.find({category: req.params.categoryId});
 
-            // all the product of selected category
             if(!products){
                 return next(new ErrorResponse(`Category not found with id of ${req.params.categoryId}`, 404))
             }
-
-            console.log(res)
             
-
-            Product.find({category: req.params.categoryId}).then(response => {
-                console.log(response)
-                res.status(200).json(response.advancedResults)
-            }).catch(err => next(err))
-
-            
-            // res.status(200).json({
-            //     success: true,
-            //     count: products.length,
-            //     data: products
-            // });
+            res.status(200).json({
+                success: true,
+                count: products.length,
+                data: products
+            });
         }else{
             res.status(200).json(res.advancedResults)
         }
@@ -74,6 +61,12 @@ exports.addProduct = async(req, res, next) => {
     try{
         req.body.category = req.params.categoryId;
         req.body.user = req.user.id;
+
+        if(req.body.status && req.user.role === 'seller'){
+            return next(
+                new ErrorResponse('Sellers are not allowed to add the product status', 403)
+            )
+        }
     
         const category = await Category.findById(req.params.categoryId)
     
@@ -109,7 +102,14 @@ exports.updateProduct = async(req, res, next) => {
                 new ErrorResponse(`User ${req.user.id} is not authorized to update product ${product._id}`, 401)
             )
         }
-    
+
+        // seller cannot change the product status, only admin can
+        if(req.user.role === 'seller'){
+            return next(
+                new ErrorResponse('Sellers are not allowed to change the product status', 403)
+            )
+        }
+
         product = await Product.findByIdAndUpdate(req.params.id, req.body, {
             new : true,
             runValidator: true
