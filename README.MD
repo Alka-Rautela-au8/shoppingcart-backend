@@ -8,11 +8,15 @@
 - get jwt and send in cookie
 - protect and authorize an api
 - logout user
+- user email verification (sending verification token using nodemailer and oAuth2 gmail api)
 - update name and email
 - update password
-- forgot password (sending password reset token using nodemailer and mailtrap.io)
+- forgot password (sending password reset token using nodemailer and oAuth2 gmail API)
 - reset password 
 - password will be hashed (using bcryptjs)
+
+### in future
+- only verified user will be able do checkout 
 
 ### Advance queries
 - select

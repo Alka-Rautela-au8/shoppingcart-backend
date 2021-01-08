@@ -22,13 +22,124 @@ exports.register = async(req, res, next) => {
             role
         })
 
+        // Get verification token
+        const verificationToken = user.getVerificationToken();
+
+        await user.save({validateBeforeSave: false});
+    
+        // Create verification url
+        const verificationUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/verify/${verificationToken}`;
+    
+        // FIXME:
+        // do this using frontend (not like this)
+        const message = `please verify your account by sending put request: \n \n ${verificationUrl}`;
+
+        // html message (optional)
+        const html = `please verify your account by sending put request: \n \n ${verificationUrl}
+        <button><a href="#" >Verify</a></button>`
+
+
+        await sendEmail({
+            email: user.email,
+            subject: 'Verify Account',
+            message,
+            html
+        })
+
         sendTokenResponse(user, 200, res);
 
     }catch(err){
+        console.log(err);
+        user.verificationToken = undefined;
+        user.verificationExpire = undefined;
+
+        await user.save({validateBeforeSave: false})
         return next(err)
     }
     
 }
+
+// @desc         send user verification email to user
+// @route        PUT /api/v1/auth/verifyToken
+// @access       Private
+exports.sendVerificationEmail = async(req, res, next) => {
+    try{
+        const user = await User.findById(req.user.id)
+        if(user.verified){
+            return res.status(200).json({success: true, message: 'User has already been verified!'})
+        }
+
+        // Get verification token
+        const verificationToken = user.getVerificationToken();
+
+        await user.save({validateBeforeSave: false});
+
+        // Create verification url
+        const verificationUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/verify/${verificationToken}`;
+
+        // FIXME:
+        // do this using frontend (not like this)
+        const message = `please verify your account by sending put request: \n \n ${verificationUrl}`;
+
+        // html message (optional)
+        const html = `please verify your account by sending put request: \n \n ${verificationUrl}
+        <button><a href="#" >Verify</a></button>`
+
+        await sendEmail({
+            email: user.email,
+            subject: 'Verify Account',
+            message,
+            html
+        })
+
+        res.status(200).json({
+            success: true,
+            message: 'verification email sent, please check your email!'
+        })
+
+    }catch(err){
+        console.log(err);
+        user.verificationToken = undefined;
+        user.verificationExpire = undefined;
+
+        await user.save({validateBeforeSave: false})
+        return next(err)
+    }
+}
+
+// @desc         Verify Email User
+// @route        PUT /api/v1/auth/verify/:verificationtoken
+// @access       Private
+exports.verifyUser = async(req, res, next) => {
+    try{
+        // Get hashed token 
+        const verificationToken = crypto
+            .createHash('sha256')
+            .update(req.params.verificationtoken)
+            .digest('hex');
+
+        const user = await User.findOne({
+            verificationToken,
+            verificationExpire: {$gt: Date.now()}
+        });
+
+        if(!user){
+            return next(new ErrorResponse(`invalid token`, 400))
+        }
+
+        // set new password
+        user.verified = true;
+        user.verificationToken = undefined;
+        user.verificationExpire = undefined;
+
+        await user.save();
+
+        sendTokenResponse(user, 200, res);
+    }catch(err){
+        next(err)
+    }
+}
+
 
 // @desc         Login User
 // @route        POST /api/v1/auth/login
@@ -165,15 +276,22 @@ exports.forgotPassword = async(req, res, next) => {
         // Create reset url
         const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/resetpassword/${resetToken}`;
     
+        // FIXME:
         // do this using frontend (not like this)
         const message = `You are receiving this email because you have requested the reset of a password. 
         Please make a PUT request to : \n \n ${resetUrl}`;
+
+        // html message (optional)
+        const html = `You are receiving this email because you have requested the reset of a password. 
+        Please make a PUT request to : \n \n ${resetUrl}
+        <button><a href="#" >Reset</a></button>`
 
 
         await sendEmail({
             email: user.email,
             subject: 'password reset token',
-            message
+            message,
+            html
         })
 
         res.status(200).json({success: true, data: 'Email sent'});
@@ -189,7 +307,7 @@ exports.forgotPassword = async(req, res, next) => {
     }
 }
 
-// @desc         forgot password
+// @desc         reset password
 // @route        PUT /api/v1/auth/resetpassword/:resettoken
 // @access       Public
 exports.resetPassword = async(req, res, next) => {
@@ -246,3 +364,4 @@ const sendTokenResponse = (user, statusCode, res) => {
             token
         });
 }
+
