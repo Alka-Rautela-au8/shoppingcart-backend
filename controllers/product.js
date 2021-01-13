@@ -68,6 +68,13 @@ exports.addProduct = async(req, res, next) => {
                 new ErrorResponse('Sellers are not allowed to add the product status', 403)
             )
         }
+
+        // check seller's email address is verified or not
+        if(!req.user.verified){
+            return next(
+                new ErrorResponse('Please first verify your account', 401)
+            )
+        }
     
         const category = await Category.findById(req.params.categoryId)
     

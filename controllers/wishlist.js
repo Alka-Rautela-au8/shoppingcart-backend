@@ -60,6 +60,7 @@ exports.getMyWishlist = async(req, res, next) => {
         }
 
         // check if item present in wishlist has been deleted or not
+        // if deleted then delete that item from wishlist as well
 
         let list = wishlist.items
 
@@ -74,7 +75,7 @@ exports.getMyWishlist = async(req, res, next) => {
                 if(!prod){
                     deletedProds.push(item._id.toString())
                 }
-                console.log('deletedprods', deletedProds)
+                
                 index += 1;
                 // resolve when forEach loop ends
                 if(index === list.length) resolve();
@@ -82,10 +83,8 @@ exports.getMyWishlist = async(req, res, next) => {
         })
 
         makingAsync.then(async() => {
-            console.log('deletedprods', deletedProds)
-            list = list.filter(listItem => deletedProds.includes(listItem._id.toString()) === false)
             
-            console.log('list-->', list)
+            list = list.filter(listItem => deletedProds.includes(listItem._id.toString()) === false)
 
             wishlist = await Wishlist.findByIdAndUpdate(wishlist._id, {
                 items: list
