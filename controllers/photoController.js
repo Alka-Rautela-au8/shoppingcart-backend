@@ -135,9 +135,9 @@ exports.photoUpload = async(req, res, next) => {
                 })
 
             }).catch(err => {
-                console.log(err)
+                next(err)
             })
-        }).catch(err => console.log(err))
+        }).catch(err => next(err))
 
 
     }catch(err){

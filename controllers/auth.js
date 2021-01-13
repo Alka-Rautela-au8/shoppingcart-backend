@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import ErrorResponse from '../utils/errorResponse';
 import User from '../models/User';
+import Wishlist from '../models/Wishlist';
 import sendEmail from '../utils/sendEmail';
 
 // @desc         Register User
@@ -9,7 +10,7 @@ import sendEmail from '../utils/sendEmail';
 exports.register = async(req, res, next) => {
     const {name, email, password, role} = req.body;
 
-    if( !name || !email || !password){
+    if(!name || !email || !password){
         return (next(new ErrorResponse('please add all required fields', 400)))
     }
 
@@ -112,7 +113,7 @@ exports.sendVerificationEmail = async(req, res, next) => {
 // @access       Private
 exports.verifyUser = async(req, res, next) => {
     try{
-        // Get hashed token 
+
         const verificationToken = crypto
             .createHash('sha256')
             .update(req.params.verificationtoken)
@@ -134,6 +135,14 @@ exports.verifyUser = async(req, res, next) => {
 
         await user.save();
 
+        // when user gets verified then a wishlist for that user gets created only if user is not 'seller'
+        if(user.role !== 'seller'){
+            const wishlist = {
+                user: req.user.id
+            }
+    
+            await Wishlist.create(wishlist);
+        }
         sendTokenResponse(user, 200, res);
     }catch(err){
         next(err)

@@ -3,6 +3,7 @@ import express from 'express';
 import {
     getProducts,
     getProduct,
+    addProduct,
     updateProduct,
     deleteProduct,
 } from '../controllers/product';
@@ -17,7 +18,7 @@ import advancedResults from '../middleware/advancedResults';
 
 import {protect, authorize} from '../middleware/auth';
 
-// merge params
+// merge params 
 const router = express.Router({mergeParams: true});
 
 router.route('/')
@@ -25,6 +26,7 @@ router.route('/')
         path: 'category',
         select: 'name'
     }), getProducts)
+    .post(protect, authorize('seller', 'admin'), addProduct)
 
 router.route('/:id')
     .get(getProduct)

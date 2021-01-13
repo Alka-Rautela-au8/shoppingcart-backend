@@ -1,4 +1,5 @@
-import User from '../models/User'
+import User from '../models/User';
+import Wishlist from '../models/Wishlist';
 
 // @desc         Get all Users
 // @route        GET /api/v1/auth/users

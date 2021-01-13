@@ -4,7 +4,7 @@ import {
     register,
     login, 
     logout,
-    getMe, 
+    getMe,
     updateDetails,
     updatePassword,
     forgotPassword,
@@ -12,6 +12,10 @@ import {
     sendVerificationEmail,
     verifyUser
 } from '../controllers/auth';
+
+import {
+    getMyWishlist
+} from '../controllers/wishlist'
 
 import {protect} from '../middleware/auth';
 
@@ -23,6 +27,7 @@ router.get('/logout', logout);
 router.put('/verify',protect, sendVerificationEmail);
 router.put('/verify/:verificationtoken',protect, verifyUser);
 router.get('/me',protect, getMe);
+router.get('/wishlist',protect, getMyWishlist);
 router.put('/updatedetails', protect, updateDetails);
 router.put('/updatepassword', protect, updatePassword);
 router.post('/forgotpassword', forgotPassword);

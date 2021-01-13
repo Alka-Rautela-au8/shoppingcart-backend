@@ -8,16 +8,22 @@ import {
     deleteCategory
 } from '../controllers/category';
 
-import Category from '../models/Category'
-import Product from '../models/Product';
+// import {getProducts, addProduct} from '../controllers/product';
+
+import Category from '../models/Category';
+
+// include other resource routers
+import productRouter from './product';
 
 import advancedResults from '../middleware/advancedResults';
 
 import {protect, authorize} from '../middleware/auth';
-import {getProducts, addProduct} from '../controllers/product';
 
-// mergeParams : true (for merging url params)
-const router = express.Router({mergeParams: true});
+
+const router = express.Router();
+
+// Re-router into other resource routers
+router.use('/:categoryId/products', productRouter);
 
 
 router
@@ -28,14 +34,14 @@ router
     .route('/:id')
         .get( getSingleCategory )
 
-//-----------------Product Route-------------------------------//
-router.route('/:categoryId/products')
-    .get(advancedResults(Product, {
-        path: 'category',
-        select: 'name'
-    }), getProducts)
-    .post(protect, authorize('seller', 'admin'), addProduct)  // only seller and admin will be able to add products
-//-------------------------------------------------------------//
+// //-----------------Product Route-------------------------------//
+// router.route('/:categoryId/products')
+//     .get(advancedResults(Product, {
+//         path: 'category',
+//         select: 'name'
+//     }), getProducts)
+//     .post(protect, authorize('seller', 'admin'), addProduct)  // only seller and admin will be able to add products
+// //-------------------------------------------------------------//
 
 router.use(protect) // all the routes below this will be protected
 router.use(authorize('admin')) // in all the routes below this, only admin will be able to perform crud

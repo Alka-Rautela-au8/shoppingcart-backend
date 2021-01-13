@@ -24,6 +24,8 @@ import category from './routes/category';
 import users from './routes/users';
 import auth from './routes/auth';
 import product from './routes/product';
+import offer from './routes/offer';
+import wishlist from './routes/wishlist';
 
 
 /* apply express body parser for parsing information contained in post request
@@ -56,6 +58,8 @@ app.use('/api/v1/category', category)
 app.use('/api/v1/users', users)
 app.use('/api/v1/auth', auth)
 app.use('/api/v1/products', product)
+app.use('/api/v1/offers', offer)
+app.use('/api/v1/wishlists', wishlist)
 
 //this middleware have to below router , else it will not catch the error
 app.use(errorHandler);

@@ -37,7 +37,7 @@ exports.getProducts = async(req, res, next) => {
 exports.getProduct = async(req, res, next) => {
     try{    
         const product = await Product.findById(req.params.id).populate({
-            path: 'category',
+            path: 'category user',
             select: 'name'
         });
 
@@ -62,6 +62,7 @@ exports.addProduct = async(req, res, next) => {
         req.body.category = req.params.categoryId;
         req.body.user = req.user.id;
 
+        // seller cannot add status of product (pending, cancelled, published), only admin can
         if(req.body.status && req.user.role === 'seller'){
             return next(
                 new ErrorResponse('Sellers are not allowed to add the product status', 403)

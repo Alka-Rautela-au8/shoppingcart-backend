@@ -41,6 +41,14 @@
 - seller
 - user
 
+# Products
+- seller can add products , but it will be in pending state
+- and admin can check the products and change the state of products to pending or cancelled 
+
+# Wishlist
+- only verified user will be able to add/remove products to their wishlist
+- and admin can see the user's wishlist
+
 ## Usage
 
 rename "config/config.env.env" to "config/config.env" and update the values/settings to your own

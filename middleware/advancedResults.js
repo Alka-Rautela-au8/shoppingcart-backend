@@ -22,12 +22,6 @@ const advancedResults = (model, populate) => async(req, res, next) => {
         // Finding resource by parsing query to js object
         let query = model.find(JSON.parse(queryStr));
 
-        // // if model is product then give only published products in response
-        // if(query.mongooseCollection.collectionName === 'products'){
-        //     // query = query.find({status: "published"})
-        //     query = model.find(JSON.parse(queryStr)).where({status: "published"});
-        // }
-
 
         // Select fields
         if(req.query.select){
