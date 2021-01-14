@@ -113,26 +113,26 @@ exports.photoUpload = async(req, res, next) => {
                     data: data
                 })
 
-                // now delete temp folder after everything is done
+                // // now delete temp folder after everything is done
 
-                // directory path
-                const dir = 'tmp';
+                // // directory path
+                // const dir = 'tmp';
 
-                // just to check files inside tmp folder
-                fs.readdir(dir, (err, files) => {
-                    if(err) next(err);
+                // // just to check files inside tmp folder
+                // fs.readdir(dir, (err, files) => {
+                //     if(err) next(err);
 
-                    files.forEach(file => {
-                        console.log(file)
-                    })
-                })
+                //     files.forEach(file => {
+                //         console.log(file)
+                //     })
+                // })
 
-                // delete directory recursively
-                fs.rmdir(dir, {recursive: true}, (err)=> {
-                    if(err) next(err);
+                // // delete directory recursively
+                // fs.rmdir(dir, {recursive: true}, (err)=> {
+                //     if(err) next(err);
 
-                    console.log(`${dir} is deleted!`)
-                })
+                //     console.log(`${dir} is deleted!`)
+                // })
 
             }).catch(err => {
                 next(err)
