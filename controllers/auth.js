@@ -39,22 +39,24 @@ exports.register = async(req, res, next) => {
         const html = `please verify your account by sending put request: \n \n ${verificationUrl}
         <button><a href="#" >Verify</a></button>`
 
-
-        await sendEmail({
-            email: user.email,
-            subject: 'Verify Account',
-            message,
-            html
-        })
-
-        sendTokenResponse(user, 200, res);
-
+        try{
+            await sendEmail({
+                email: user.email,
+                subject: 'Verify Account',
+                message,
+                html
+            })
+    
+            sendTokenResponse(user, 200, res);
+        }catch(err){
+            console.log(err);
+            user.verificationToken = undefined;
+            user.verificationExpire = undefined;
+            await user.save({validateBeforeSave: false})
+            return next(new ErrorResponse('Email could not be sent', 500))
+        }
     }catch(err){
         console.log(err);
-        user.verificationToken = undefined;
-        user.verificationExpire = undefined;
-
-        await user.save({validateBeforeSave: false})
         return next(err)
     }
     
@@ -66,6 +68,10 @@ exports.register = async(req, res, next) => {
 exports.sendVerificationEmail = async(req, res, next) => {
     try{
         const user = await User.findById(req.user.id)
+
+        if(!user){
+            return res.status(404).json({success: false, message: 'User not found!'})
+        }
         if(user.verified){
             return res.status(200).json({success: true, message: 'User has already been verified!'})
         }
@@ -86,24 +92,26 @@ exports.sendVerificationEmail = async(req, res, next) => {
         const html = `please verify your account by sending put request: \n \n ${verificationUrl}
         <button><a href="#" >Verify</a></button>`
 
-        await sendEmail({
-            email: user.email,
-            subject: 'Verify Account',
-            message,
-            html
-        })
-
-        res.status(200).json({
-            success: true,
-            message: 'verification email sent, please check your email!'
-        })
-
+        try{
+            await sendEmail({
+                email: user.email,
+                subject: 'Verify Account',
+                message,
+                html
+            })
+    
+            res.status(200).json({
+                success: true,
+                message: 'verification email sent, please check your email!'
+            })
+        }catch(err){
+            console.log(err);
+            user.verificationToken = undefined;
+            user.verificationExpire = undefined;
+            await user.save({validateBeforeSave: false})
+            return next(new ErrorResponse('Email could not be sent', 500))
+        }
     }catch(err){
-        console.log(err);
-        user.verificationToken = undefined;
-        user.verificationExpire = undefined;
-
-        await user.save({validateBeforeSave: false})
         return next(err)
     }
 }
@@ -295,23 +303,22 @@ exports.forgotPassword = async(req, res, next) => {
         Please make a PUT request to : \n \n ${resetUrl}
         <button><a href="#" >Reset</a></button>`
 
-
-        await sendEmail({
-            email: user.email,
-            subject: 'password reset token',
-            message,
-            html
-        })
-
-        res.status(200).json({success: true, data: 'Email sent'});
+        try{
+            await sendEmail({
+                email: user.email,
+                subject: 'password reset token',
+                message,
+                html
+            })
+    
+            res.status(200).json({success: true, data: 'Email sent'});
+        }catch(err){
+            console.log(err);
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpire = undefined;
+            await user.save({validateBeforeSave: false})
+        }
     }catch(err){
-
-        console.log(err);
-        user.resetPasswordToken = undefined;
-        user.resetPasswordExpire = undefined;
-
-        await user.save({validateBeforeSave: false})
-
         return next(new ErrorResponse('Email could not be send', 500))
     }
 }
