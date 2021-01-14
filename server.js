@@ -10,7 +10,8 @@ import connectDB from './config/db';
 
 
 // Load env variables
-dotenv.config({path : './config/config.env'})
+// dotenv.config({path : './config/config.env'})
+dotenv.config()
 
 // connect to database
 connectDB();

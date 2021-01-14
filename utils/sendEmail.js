@@ -8,7 +8,7 @@ const sendEmail = async(options) => {
     try{
         // get access token from oAuth2 client
         const accessToken = await oAuth2Client.getAccessToken()
-
+        
         const transporter = nodemailer.createTransport({
             // host: process.env.SMTP_HOST,
             // port: process.env.SMTP_PORT,

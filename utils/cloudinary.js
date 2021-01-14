@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 // Load env variables
-dotenv.config({path : './config/config.env'})
+// dotenv.config({path : './config/config.env'})
+dotenv.config()
 
 const cloudinary = require('cloudinary').v2;
 
