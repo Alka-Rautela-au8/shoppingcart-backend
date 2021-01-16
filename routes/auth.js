@@ -25,7 +25,7 @@ router.post('/register', register);
 router.post('/login', login);
 router.get('/logout', logout);
 router.put('/verify',protect, sendVerificationEmail);
-router.put('/verify/:verificationtoken',protect, verifyUser);
+router.put('/verify/:verificationtoken', verifyUser);
 router.get('/me',protect, getMe);
 router.get('/wishlist',protect, getMyWishlist);
 router.put('/updatedetails', protect, updateDetails);

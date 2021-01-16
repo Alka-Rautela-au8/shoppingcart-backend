@@ -29,15 +29,16 @@ exports.register = async(req, res, next) => {
         await user.save({validateBeforeSave: false});
     
         // Create verification url
-        const verificationUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/verify/${verificationToken}`;
+        // const verificationUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/verify/${verificationToken}`;
+        const verificationUrl = `http://localhost:3000/verify/${verificationToken}`;
     
         // FIXME:
         // do this using frontend (not like this)
-        const message = `please verify your account by sending put request: \n \n ${verificationUrl}`;
+        const message = `please verify your account: \n \n ${verificationUrl}`;
 
         // html message (optional)
-        const html = `please verify your account by sending put request: \n \n ${verificationUrl}
-        <button><a href="#" >Verify</a></button>`
+        const html = `please verify your account: \n \n ${verificationUrl}
+        <button><a href=${verificationUrl} >Verify</a></button>`
 
         try{
             await sendEmail({
@@ -63,7 +64,7 @@ exports.register = async(req, res, next) => {
 }
 
 // @desc         send user verification email to user
-// @route        PUT /api/v1/auth/verifyToken
+// @route        PUT /api/v1/auth/verify
 // @access       Private
 exports.sendVerificationEmail = async(req, res, next) => {
     try{
@@ -82,15 +83,17 @@ exports.sendVerificationEmail = async(req, res, next) => {
         await user.save({validateBeforeSave: false});
 
         // Create verification url
-        const verificationUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/verify/${verificationToken}`;
+        // const verificationUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/verify/${verificationToken}`;
+                // const verificationUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/verify/${verificationToken}`;
+                const verificationUrl = `http://localhost:3000/verify/${verificationToken}`;
 
         // FIXME:
         // do this using frontend (not like this)
-        const message = `please verify your account by sending put request: \n \n ${verificationUrl}`;
+        const message = `please verify your account: \n \n ${verificationUrl}`;
 
         // html message (optional)
-        const html = `please verify your account by sending put request: \n \n ${verificationUrl}
-        <button><a href="#" >Verify</a></button>`
+        const html = `please verify your account: \n \n ${verificationUrl}
+        <button><a href=${verificationUrl} >Verify</a></button>`
 
         try{
             await sendEmail({
@@ -118,7 +121,7 @@ exports.sendVerificationEmail = async(req, res, next) => {
 
 // @desc         Verify Email User
 // @route        PUT /api/v1/auth/verify/:verificationtoken
-// @access       Private
+// @access       Public
 exports.verifyUser = async(req, res, next) => {
     try{
 
@@ -291,7 +294,8 @@ exports.forgotPassword = async(req, res, next) => {
         await user.save({validateBeforeSave: false});
     
         // Create reset url
-        const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/resetpassword/${resetToken}`;
+        // const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/resetpassword/${resetToken}`;
+        const resetUrl = `http://localhost:3000/verifyPassword/${resetToken}`;
     
         // FIXME:
         // do this using frontend (not like this)
@@ -364,10 +368,13 @@ const sendTokenResponse = (user, statusCode, res) => {
 
     const options = {
         expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
-        httpOnly: false,
-        sameSite: 'none',
-        secure: false
+        // httpOnly: false,
+        secure: false,
+        sameSite: 'none'
     }
+
+
+    // sameSite: 'none',
 
     // // secure flag for production mode
     // if(process.env.NODE_ENV === 'production'){

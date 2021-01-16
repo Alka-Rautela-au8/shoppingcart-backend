@@ -5,13 +5,13 @@ import User from '../models/User';
 // Protect Routes
 exports.protect = async(req, res, next) => {
     let token;
-    console.log("header-->",req.header.authorization)
+    console.log("headers-->",req.headers.authorization)
     console.log("cookies --->", req.cookies)
 
     // if token is sent in header
     if(
-        req.header.authorization &&
-        req.header.authorization.startsWith('Bearer')
+        req.headers.authorization &&
+        req.headers.authorization.startsWith('Bearer')
     ){
         // Set token from bearer token in header
         token = req.headers.authorization.split(" ")[1];
